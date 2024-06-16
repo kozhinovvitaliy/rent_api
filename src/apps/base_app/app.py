@@ -9,7 +9,7 @@ from db.postgres.dependecies import get_async_session
 
 app = Litestar(
     openapi_config=OpenAPIConfig(
-        title="Litestar API", version="0.0.1", render_plugins=[SwaggerRenderPlugin()]
+        title="Litestar API", version="0.0.1", render_plugins=[SwaggerRenderPlugin()],
     ),
     dependencies={
         "injected_session": Provide(get_async_session),

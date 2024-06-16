@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 class Postgres(BaseSettings):
     dsn: PostgresDsn = MultiHostUrl(
-        "postgresql+asyncpg://vitaliykozhinov:Dbnfkz1996@localhost:5432/rent"
+        "postgresql+asyncpg://vitaliykozhinov:Dbnfkz1996@localhost:5432/rent",
     )
 
     @property

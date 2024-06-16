@@ -1,6 +1,6 @@
 from litestar import status_codes
 
-from apps.base_app.exceptions import BaseNotFound, BaseAlreadyExists
+from apps.base_app.exceptions import BaseAlreadyExists, BaseNotFound
 
 
 class UserNotFoundException(BaseNotFound):

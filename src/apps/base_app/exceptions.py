@@ -1,3 +1,5 @@
+from typing import Any
+
 from litestar import status_codes
 from litestar.exceptions import HTTPException
 
@@ -6,9 +8,9 @@ class _BaseException(HTTPException):
     status_code: int
     detail: str
 
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs: dict[str, Any]):
         if not hasattr(cls, "status_code") or not isinstance(cls.status_code, int):
-            raise AttributeError("Attr. status_code should be integer")
+            raise AttributeError
 
     def __init__(self, detail: str):
         self.detail = detail

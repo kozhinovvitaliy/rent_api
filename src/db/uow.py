@@ -1,7 +1,6 @@
 from types import TracebackType
-from typing import Optional, Type
+from typing import Optional
 
-from litestar.di import Provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.repo.users_repo import UsersRepo
@@ -17,9 +16,9 @@ class UnitOfWork:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[Type[BaseException]],
-        exc_tb: Optional[Type[TracebackType]],
+        exc_type: Optional[type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
     ) -> None:
         await self.session.rollback()
 

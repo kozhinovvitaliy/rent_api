@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Literal
-from uuid import UUID
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from uuid import UUID
 
 
 class GetUserResponse(BaseModel):

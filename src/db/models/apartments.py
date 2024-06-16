@@ -17,5 +17,6 @@ class Apartments(Base, ID, Timestamp, Deleted):
     square: Mapped[float]
     benefits: Mapped[list] = mapped_column("benefits", ARRAY(String))
 
+
     def __repr__(self) -> str:
         return f"<Apartment(id={self.id}, name={self.name}>"

@@ -47,11 +47,14 @@ lint.ignore = [
     "PLW2901",  # pylint - for loop variable overwritten by assignment target
     "ANN101",
     "D212",
+    "FA100",
+    "ANN204",
+    "FA102",
 ]
 line-length = 120
 src = ["src", "tests",]
 target-version = "py38"
-exclude = ["src/db/postgres/alembic/*", "src/db/postgres/base.py"]
+exclude = ["src/db/postgres/alembic/*", "src/db/postgres/base.py", "__init__.py"]
 
 [tool.mypy]
 mypy_path = "src"

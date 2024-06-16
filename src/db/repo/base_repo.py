@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar
 from uuid import UUID
 
 from sqlalchemy import Column, ColumnExpressionArgument, select
@@ -25,7 +25,7 @@ class CRUD(Generic[Table]):
         return (await self.session.execute(stmt)).scalars().first()
 
     async def upsert(
-        self, data: dict[str, Any], conflict_cols: tuple[Column, ...]
+        self, data: dict[str, Any], conflict_cols: tuple[Column, ...],
     ) -> Table:
         stmt = (
             insert(self.model)

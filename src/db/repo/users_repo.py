@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import Column, select
+from sqlalchemy import Column
 
 from db.models import Users
 from db.repo.base_repo import CRUD, Table

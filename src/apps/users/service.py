@@ -12,14 +12,16 @@ from db.uow import UnitOfWork
 class UserService(BaseService):
 
     @staticmethod
-    async def get_user(user_id: UUID, uow: UnitOfWork):
+    async def get_user(user_id: UUID, uow: UnitOfWork) -> Users:
         if user := await uow.users.get(user_id):
             return user
-        raise UserNotFoundException(f"user {user_id} not found")
+        detail = f"user {user_id} not found"
+        raise UserNotFoundException(detail)
 
     async def create_user(self, data: CreateUserRequest, uow: UnitOfWork) -> Users:
         if await uow.users.get_by_login(data.login):
-            raise UserAlreadyExistsException(f"user {data.login} already exists")
+            detail = f"user {data.login} already exists"
+            raise UserAlreadyExistsException(detail)
         raw_data = data.model_dump(exclude={"password"})
         hashed_password = self.__hash_user_password(data.password)
         raw_data["password"] = hashed_password
@@ -29,11 +31,9 @@ class UserService(BaseService):
 
     async def login(self, login_data: UserLoginRequest, uow: UnitOfWork) -> UUID:
         user = await uow.users.get_by_login(login_data.login)
-        if not user:
-            raise UserNotFoundException(f"User {login_data.login} not found")
-
-        if self.__hash_user_password(login_data.password) != user.password:
-            raise UserNotFoundException
+        if not user or self.__hash_user_password(login_data.password) != user.password:
+            detail = f"User {login_data.login} not found"
+            raise UserNotFoundException(detail)
         return uuid.uuid4()
 
     @staticmethod
