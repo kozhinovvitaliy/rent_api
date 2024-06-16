@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "rent-api"
+version = "0.1.0"
+description = ""
+authors = ["Vitaliy <kozhinov.vitaly@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+litestar = {extras = ["brotli"], version = "^2.9.0"}
+pytest = "^8.2.2"
+ruff = "^0.4.8"
+mypy = "^1.10.0"
+black = "^24.4.2"
+pydantic = "^2.7.3"
+alembic = "^1.13.1"
+sqlalchemy = "^2.0.30"
+pydantic-settings = "^2.3.1"
+uvicorn = "^0.30.1"
+asyncpg = "^0.29.0"
+greenlet = "^3.0.3"
+isort = "^5.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+lint.select = ["ALL"]
+lint.ignore = [
+    "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
+    "B010", # flake8-bugbear - do not call setattr with a constant attribute value
+    "D100", # pydocstyle - missing docstring in public module
+    "D101", # pydocstyle - missing docstring in public class
+    "D102", # pydocstyle - missing docstring in public method
+    "D103", # pydocstyle - missing docstring in public function
+    "D104", # pydocstyle - missing docstring in public package
+    "D105", # pydocstyle - missing docstring in magic method
+    "D106", # pydocstyle - missing docstring in public nested class
+    "D107", # pydocstyle - missing docstring in __init__
+    "D202", # pydocstyle - no blank lines allowed after function docstring
+    "D203",
+    "D205", # pydocstyle - 1 blank line required between summary line and description
+    "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
+    "E501", # pycodestyle line too long, handled by black
+    "PLW2901",  # pylint - for loop variable overwritten by assignment target
+    "ANN101",
+    "D212",
+]
+line-length = 120
+src = ["src", "tests",]
+target-version = "py38"
+exclude = ["src/db/postgres/alembic/*", "src/db/postgres/base.py"]
+
+[tool.mypy]
+mypy_path = "src"
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_return_any = true
+strict = true
+disallow_untyped_decorators = true
+disallow_any_generics = false
+implicit_reexport = false
+show_error_codes = true
+exclude = ["tests/*", "src/db/postgres/alembic/*", "src/db/postgres/base.py"]
