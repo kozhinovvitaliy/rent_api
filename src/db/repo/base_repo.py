@@ -25,7 +25,9 @@ class CRUD(Generic[Table]):
         return (await self.session.execute(stmt)).scalars().first()
 
     async def upsert(
-        self, data: dict[str, Any], conflict_cols: tuple[Column, ...],
+        self,
+        data: dict[str, Any],
+        conflict_cols: tuple[Column, ...],
     ) -> Table:
         stmt = (
             insert(self.model)
