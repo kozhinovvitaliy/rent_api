@@ -13,7 +13,7 @@ class SexEnum(Enum):
     FEMALE: ClassVar[str] = "female"
 
 
-class Users(Base, ID, Timestamp, Deleted):
+class User(Base, ID, Timestamp, Deleted):
     __tablename__: ClassVar[str] = "users"
 
     first_name: Mapped[str]

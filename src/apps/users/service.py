@@ -5,20 +5,20 @@ from uuid import UUID
 from apps.base_app.service import BaseService
 from apps.users.exceptions import UserAlreadyExistsException, UserNotFoundException
 from apps.users.schemas import CreateUserRequest, UserLoginRequest
-from db.models import Users
+from db.models import User
 from db.uow import UnitOfWork
 
 
 class UserService(BaseService):
 
     @staticmethod
-    async def get_user(user_id: UUID, uow: UnitOfWork) -> Users:
+    async def get_user(user_id: UUID, uow: UnitOfWork) -> User:
         if user := await uow.users.get(user_id):
             return user
         detail = f"user {user_id} not found"
         raise UserNotFoundException(detail)
 
-    async def create_user(self, data: CreateUserRequest, uow: UnitOfWork) -> Users:
+    async def create_user(self, data: CreateUserRequest, uow: UnitOfWork) -> User:
         if await uow.users.get_by_login(data.login):
             detail = f"user {data.login} already exists"
             raise UserAlreadyExistsException(detail)

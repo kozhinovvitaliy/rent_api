@@ -4,8 +4,10 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import SwaggerRenderPlugin
 
 from apps.base_app.routers import app_router
+from apps.middlewares import auth_middleware
 from db.dependecies import get_uow
 from db.postgres.dependecies import get_async_session
+
 
 app = Litestar(
     openapi_config=OpenAPIConfig(

@@ -1,7 +1,7 @@
 from db.models.apartments import Apartments
-from db.models.users import Users
+from db.models.user import User
 
 __all__ = [
-    "Users",
+    "User",
     "Apartments",
 ]
