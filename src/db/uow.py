@@ -1,16 +1,16 @@
 from types import TracebackType
 from typing import Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from db.postgres.base import SessionFactory
 from db.repo.users_repo import UsersRepo
 
 
 class UnitOfWork:
-    def __init__(self, session: AsyncSession):
-        self.session = session
+    def __init__(self) -> None:
+        self.session_factory = SessionFactory()
 
     async def __aenter__(self) -> "UnitOfWork":
+        self.session = self.session_factory
         self.users = UsersRepo(self.session)
         return self
 
@@ -27,3 +27,6 @@ class UnitOfWork:
 
     async def flush(self) -> None:
         await self.session.flush()
+
+    async def rollback(self) -> None:
+        await self.session.rollback()

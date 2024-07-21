@@ -14,7 +14,6 @@ app = Litestar(
         render_plugins=[SwaggerRenderPlugin()],
     ),
     dependencies={
-        "injected_session": Provide(get_async_session),
         "injected_uow": Provide(get_uow),
     },
 )

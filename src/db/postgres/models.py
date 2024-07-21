@@ -10,7 +10,7 @@ from sqlalchemy.orm import Mapped, declarative_mixin, mapped_column
 class ID:
     __abstract__ = True
 
-    id: Mapped[UUID] = mapped_column(
+    id: Mapped[UUID] = mapped_column(  # type: ignore[type-arg]
         "id",
         UUID(as_uuid=True),
         default=uuid4,

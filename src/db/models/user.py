@@ -13,7 +13,7 @@ class SexEnum(Enum):
     FEMALE: ClassVar[str] = "female"
 
 
-class Users(Base, ID, Timestamp, Deleted):
+class User(Base, ID, Timestamp, Deleted):
     __tablename__: ClassVar[str] = "users"
 
     first_name: Mapped[str]
@@ -24,3 +24,7 @@ class Users(Base, ID, Timestamp, Deleted):
 
     def __repr__(self) -> str:
         return f"<User(login={self.login})>"
+
+    def dict(self) -> dict:  # type: ignore[type-arg]
+        return self.__dict__
+
