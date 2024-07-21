@@ -1,3 +1,4 @@
+from typing import ClassVar, Optional
 from uuid import UUID
 
 from litestar import MediaType, get, post
@@ -11,41 +12,42 @@ from apps.users.schemas.pydantic_schemas import (
 )
 from apps.users.service import UserService
 from db.uow import UnitOfWork
+from apps.middlewares import auth_middleware
 
 
 class UserController(BaseController):
-    service = UserService()
+    service: ClassVar[UserService] = UserService()
 
-    @get("/{user_id:uuid}", media_type=MediaType.JSON)
+    @get("/{user_id:uuid}", media_type=MediaType.JSON, middleware=[auth_middleware])
     async def get_user(
-        self,
-        user_id: UUID,
-        injected_uow: UnitOfWork,
+            self,
+            user_id: UUID,
+            injected_uow: UnitOfWork,
     ) -> GetUserResponse:
-        async with injected_uow as uow:
-            return await self.service.get_user(user_id, uow=uow)
+        return await self.service.get_user(user_id, uow=injected_uow)
 
     @post("", media_type=MediaType.JSON)
-    async def create_user(
-        self,
-        data: CreateUserRequest,
-        injected_uow: UnitOfWork,
-    ) -> GetUserResponse:
-        async with injected_uow as uow:
-            data = await self.service.create_user(data=data, uow=uow)
+    async def create_user(  # type: ignore[return]
+            self,
+            data: CreateUserRequest,
+            injected_uow: UnitOfWork,
+    ) -> Optional[GetUserResponse]:
+        user = await self.service.create_user(data=data, uow=injected_uow)
+        if user:
             return GetUserResponse(
-                first_name=data.first_name,
-                last_name=data.last_name,
-                login=data.login,
-                sex=data.sex,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                login=user.login,
+                sex=user.sex,
             )
+        return None
 
     @post("/login", media_type=MediaType.JSON)
     async def login(
-        self,
-        data: UserLoginRequest,
-        injected_uow: UnitOfWork,
+            self,
+            data: UserLoginRequest,
+            injected_uow: UnitOfWork,
     ) -> UserLoginResponse:
-        async with injected_uow as uow:
-            authentication_code = await self.service.login(data, uow)
-            return UserLoginResponse(authentication_code=authentication_code)
+        authentication_code = await self.service.login(login_data=data, uow=injected_uow)
+        schema = UserLoginResponse(authentication_code=authentication_code)
+        return UserLoginResponse(authentication_code=authentication_code)

@@ -1,7 +1,7 @@
 from typing import Any, Generic, Type, TypeVar
 from uuid import UUID
 
-from sqlalchemy import Column, ColumnExpressionArgument, select
+from sqlalchemy import ColumnExpressionArgument, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,26 +17,13 @@ class CRUD(Generic[Table]):
         self.session = session
 
     async def get(self, obj_id: str | UUID) -> Table | None:
-        stmt = select(self.model).where(self.model.id == obj_id)
+        stmt = select(self.model).where(self.model.id == obj_id)  # type: ignore[attr-defined]
         return (await self.session.execute(stmt)).scalars().one_or_none()
 
-    async def create(self, data: dict[str, Any]) -> Table:
+    async def create(self, data: dict[str, Any]) -> Table | None:
         stmt = insert(self.model).values(**data).returning(self.model)
         return (await self.session.execute(stmt)).scalars().first()
 
-    async def upsert(
-        self,
-        data: dict[str, Any],
-        conflict_cols: tuple[Column, ...],
-    ) -> Table:
-        stmt = (
-            insert(self.model)
-            .values(**data)
-            .on_conflict_do_update(index_elements=conflict_cols, set_=data)
-            .returning(self.model)
-        )
-        return (await self.session.execute(stmt)).scalars().one()
-
-    async def get_first(self, filters: list[ColumnExpressionArgument]) -> Table:
+    async def get_first(self, filters: list[ColumnExpressionArgument[Any]]) -> Table | None:
         stmt = select(self.model).where(*filters)
         return (await self.session.execute(stmt)).scalars().first()

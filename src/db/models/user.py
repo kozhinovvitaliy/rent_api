@@ -24,3 +24,7 @@ class User(Base, ID, Timestamp, Deleted):
 
     def __repr__(self) -> str:
         return f"<User(login={self.login})>"
+
+    def dict(self) -> dict:  # type: ignore[type-arg]
+        return self.__dict__
+

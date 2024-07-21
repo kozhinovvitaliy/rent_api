@@ -1,38 +1,36 @@
-from typing import TYPE_CHECKING, cast
+from uuid import UUID
+from typing import Any
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from db.models import User
-from apps.security.schema import decode_jwt_token
 from litestar.connection import ASGIConnection
 from litestar.exceptions import NotAuthorizedException
 from litestar.middleware import (
     AbstractAuthenticationMiddleware,
     AuthenticationResult,
 )
-from settings import settings
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncEngine
+from db.uow import UnitOfWork
+from db.models import User
 
-API_KEY_HEADER = settings.app.key
+
+def is_uuid(value: Any) -> bool:
+    try:
+        val = UUID(value)
+        return True
+    except ValueError:
+        return False
 
 
 class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
-    async def authenticate_request(self, connection: ASGIConnection) -> AuthenticationResult:
+    async def authenticate_request(self, connection: ASGIConnection) -> AuthenticationResult:  # type: ignore[type-arg]
 
-        auth_header = connection.headers.get(API_KEY_HEADER)
-        if not auth_header:
-            raise NotAuthorizedException()
+        user_id = connection.headers.get("x-api-key")
+        if not user_id or not is_uuid(user_id):
+            raise NotAuthorizedException
 
-        # decode the token, the result is a ``Token`` model instance
-        token = decode_jwt_token(encoded_token=auth_header)
-
-        engine = cast("AsyncEngine", connection.app.state.postgres_connection)
-        async with AsyncSession(engine) as async_session:
-            async with async_session.begin():
-                user = await async_session.execute(select(User).where(User.id == token.sub))
-        if not user:
-            raise NotAuthorizedException()
-        return AuthenticationResult(user=user, auth=token)
+        async with UnitOfWork() as uow:  # noqa: SIM117
+            user = await uow.users.get(user_id)
+            if not user:
+                raise NotAuthorizedException
+        return AuthenticationResult(user=user, auth=user_id)

@@ -1,7 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import AsyncGenerator
 
 from db.uow import UnitOfWork
 
 
-async def get_uow(injected_session: AsyncSession) -> UnitOfWork:
-    return UnitOfWork(injected_session)
+async def get_uow() -> AsyncGenerator[UnitOfWork, None]:
+    async with UnitOfWork() as uow:
+        yield uow
+        await uow.rollback()
