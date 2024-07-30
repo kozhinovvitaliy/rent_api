@@ -7,7 +7,7 @@ class Postgres(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
     dsn: PostgresDsn = MultiHostUrl(
-        "postgresql+asyncpg://vitaliykozhinov:Dbnfkz1996@localhost:5432/rent",
+        "postgresql+asyncpg://otus:otus@localhost:5432/otus_db",
     )
 
     @property

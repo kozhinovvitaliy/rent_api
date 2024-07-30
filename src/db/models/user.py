@@ -9,8 +9,8 @@ from db.postgres.models import ID, Deleted, Timestamp
 
 
 class SexEnum(Enum):
-    MALE: ClassVar[str] = "male"
-    FEMALE: ClassVar[str] = "female"
+    MALE = "MALE"
+    FEMALE = "FEMALE"
 
 
 class User(Base, ID, Timestamp, Deleted):
